@@ -59,10 +59,12 @@
     /* Card container */
     .card-area {
       perspective: 800px;
-      height: 340px;
       margin-bottom: 1.2rem;
       touch-action: pan-y;
     }
+    .card-area.has-conj { }
+    .card-area { height: 340px; }
+    .card-area.tall { height: 480px; }
     .card {
       width: 100%; height: 100%;
       position: relative;
@@ -82,6 +84,7 @@
       background: #16213e;
       border: 1px solid #0f3460;
       box-shadow: 0 8px 32px rgba(0,0,0,.35);
+      overflow-y: auto;
     }
     .card-front .en-word {
       font-size: 1.8rem; font-weight: 700; text-align: center; line-height: 1.3;
@@ -129,6 +132,26 @@
     .conf-dot.active { transform: scale(1.15); }
     .conf-label {
       font-size: .75rem; color: #888; margin-top: .4rem; text-align: center;
+    }
+
+    /* Conjugation table */
+    .conj-table {
+      margin-top: 1rem; width: 100%;
+      border-collapse: collapse; font-size: .8rem;
+    }
+    .conj-table caption {
+      font-size: .7rem; color: #666; text-transform: uppercase;
+      letter-spacing: .05em; padding-bottom: .35rem; text-align: left;
+    }
+    .conj-table td {
+      padding: .25rem .4rem;
+      border-bottom: 1px solid #0f3460;
+    }
+    .conj-table td:first-child {
+      color: #888; text-align: right; width: 40%; font-size: .75rem;
+    }
+    .conj-table td:last-child {
+      color: #e94560; font-weight: 600;
     }
 
     /* Nav arrows */
@@ -192,6 +215,10 @@
             <div id="ex-es"></div>
             <span id="ex-en"></span>
           </div>
+          <table class="conj-table" id="conj-table">
+            <caption>Presente</caption>
+            <tbody id="conj-body"></tbody>
+          </table>
           <div class="confidence" id="confidence">
             <button class="conf-btn" id="conf-minus">−</button>
             <div class="conf-dots" id="conf-dots"></div>
@@ -229,6 +256,9 @@
     const confLabel = document.getElementById('conf-label');
     const confMinus = document.getElementById('conf-minus');
     const confPlus = document.getElementById('conf-plus');
+    const conjTable = document.getElementById('conj-table');
+    const conjBody = document.getElementById('conj-body');
+    const PRONOUNS = ['yo', 'tú', 'él/ella', 'nosotros', 'vosotros', 'ellos'];
 
     let currentWords = [];
     let currentIndex = 0;
@@ -332,6 +362,21 @@
       if (learned) confLabel.textContent = 'Learned! Press − to review again';
       else if (level === 0) confLabel.textContent = 'Rate your confidence';
       else confLabel.textContent = level + ' / ' + LEVEL_MAX;
+
+      // Conjugation table
+      if (w.conj) {
+        conjBody.innerHTML = '';
+        w.conj.forms.forEach((form, i) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = '<td>' + PRONOUNS[i] + '</td><td>' + form + '</td>';
+          conjBody.appendChild(tr);
+        });
+        conjTable.style.display = '';
+        cardArea.classList.add('tall');
+      } else {
+        conjTable.style.display = 'none';
+        cardArea.classList.remove('tall');
+      }
     }
 
     function navigate(dir) {
