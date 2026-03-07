@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Spanish App</title>
+  <title>Spanish Flashcards</title>
   <link rel="manifest" href="manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -12,25 +12,265 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       min-height: 100vh;
       background: #1a1a2e;
-      color: white;
+      color: #fff;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
     }
-    .container { text-align: center; padding: 2rem; }
-    h1 { font-size: 2.5rem; margin-bottom: 1rem; }
-    p { font-size: 1.2rem; color: #aaa; }
+
+    /* --- Menu Screen --- */
+    #menu { padding: 2rem 1rem; max-width: 480px; margin: 0 auto; }
+    #menu h1 { text-align: center; font-size: 1.8rem; margin-bottom: .3rem; }
+    #menu .subtitle { text-align: center; color: #888; font-size: .95rem; margin-bottom: 1.8rem; }
+    .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    .cat-btn {
+      background: #16213e;
+      border: 1px solid #0f3460;
+      border-radius: 14px;
+      padding: 1.4rem .8rem;
+      text-align: center;
+      cursor: pointer;
+      transition: transform .15s, background .15s;
+      -webkit-user-select: none; user-select: none;
+    }
+    .cat-btn:active { transform: scale(.96); background: #0f3460; }
+    .cat-icon { font-size: 2rem; display: block; margin-bottom: .45rem; }
+    .cat-name { font-size: .95rem; font-weight: 600; }
+    .cat-count { font-size: .75rem; color: #888; margin-top: .2rem; }
+
+    /* --- Flashcard Screen --- */
+    #flashcard-screen { display: none; max-width: 480px; margin: 0 auto; padding: 1rem; }
+    .top-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1rem; padding: 0 .25rem;
+    }
+    .back-btn {
+      background: none; border: none; color: #fff; font-size: 1.5rem;
+      cursor: pointer; padding: .25rem .5rem; line-height: 1;
+    }
+    .card-counter { font-size: .95rem; color: #888; }
+    .cat-title { font-size: 1.1rem; font-weight: 600; }
+
+    /* Card container */
+    .card-area {
+      perspective: 800px;
+      height: 340px;
+      margin-bottom: 1.2rem;
+      touch-action: pan-y;
+    }
+    .card {
+      width: 100%; height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform .5s;
+      cursor: pointer;
+    }
+    .card.flipped { transform: rotateY(180deg); }
+    .card-face {
+      position: absolute; inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 18px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 2rem 1.5rem;
+      background: #16213e;
+      border: 1px solid #0f3460;
+      box-shadow: 0 8px 32px rgba(0,0,0,.35);
+    }
+    .card-front .en-word {
+      font-size: 1.8rem; font-weight: 700; text-align: center; line-height: 1.3;
+    }
+    .card-front .tap-hint {
+      margin-top: 1.2rem; font-size: .8rem; color: #555;
+    }
+    .card-back {
+      transform: rotateY(180deg);
+    }
+    .card-back .es-word {
+      font-size: 1.7rem; font-weight: 700; color: #e94560; text-align: center;
+    }
+    .card-back .gender {
+      font-size: .95rem; color: #888; margin-top: .25rem; font-style: italic;
+    }
+    .card-back .example {
+      margin-top: 1.4rem; font-size: .95rem; color: #ccc; text-align: center; line-height: 1.5;
+    }
+    .card-back .example span {
+      display: block; margin-top: .35rem; color: #888; font-size: .85rem;
+    }
+
+    /* Nav arrows */
+    .nav-row {
+      display: flex; justify-content: center; gap: 3rem; align-items: center;
+    }
+    .nav-btn {
+      background: #16213e; border: 1px solid #0f3460; color: #fff;
+      width: 56px; height: 56px; border-radius: 50%;
+      font-size: 1.4rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s;
+    }
+    .nav-btn:active { background: #0f3460; }
+    .nav-btn:disabled { opacity: .3; cursor: default; }
+
+    /* Swipe transition */
+    .card-area.slide-left .card { animation: slideLeft .25s; }
+    .card-area.slide-right .card { animation: slideRight .25s; }
+    @keyframes slideLeft {
+      0% { opacity: 1; transform: translateX(0); }
+      40% { opacity: 0; transform: translateX(-60px); }
+      60% { opacity: 0; transform: translateX(60px); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes slideRight {
+      0% { opacity: 1; transform: translateX(0); }
+      40% { opacity: 0; transform: translateX(60px); }
+      60% { opacity: 0; transform: translateX(-60px); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Hola Mundo 🇪🇸</h1>
-    <p>Your Spanish app is working!</p>
+
+  <!-- Menu Screen -->
+  <div id="menu">
+    <h1>Spanish B1/B2</h1>
+    <p class="subtitle">Tap a category to study</p>
+    <div class="cat-grid" id="cat-grid"></div>
   </div>
+
+  <!-- Flashcard Screen -->
+  <div id="flashcard-screen">
+    <div class="top-bar">
+      <button class="back-btn" id="back-btn" aria-label="Back to menu">&#8592;</button>
+      <span class="cat-title" id="screen-title"></span>
+      <span class="card-counter" id="counter"></span>
+    </div>
+    <div class="card-area" id="card-area">
+      <div class="card" id="card">
+        <div class="card-face card-front">
+          <div class="en-word" id="en-word"></div>
+          <div class="tap-hint">tap to flip</div>
+        </div>
+        <div class="card-face card-back">
+          <div class="es-word" id="es-word"></div>
+          <div class="gender" id="gender"></div>
+          <div class="example">
+            <div id="ex-es"></div>
+            <span id="ex-en"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="nav-btn" id="prev-btn" aria-label="Previous card">&#8592;</button>
+      <button class="nav-btn" id="next-btn" aria-label="Next card">&#8594;</button>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
   <script>
+    const menuEl = document.getElementById('menu');
+    const flashEl = document.getElementById('flashcard-screen');
+    const gridEl = document.getElementById('cat-grid');
+    const cardEl = document.getElementById('card');
+    const cardArea = document.getElementById('card-area');
+    const enWordEl = document.getElementById('en-word');
+    const esWordEl = document.getElementById('es-word');
+    const genderEl = document.getElementById('gender');
+    const exEsEl = document.getElementById('ex-es');
+    const exEnEl = document.getElementById('ex-en');
+    const counterEl = document.getElementById('counter');
+    const titleEl = document.getElementById('screen-title');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const backBtn = document.getElementById('back-btn');
+
+    let currentWords = [];
+    let currentIndex = 0;
+
+    // Build category grid
+    CATEGORIES.forEach((cat, i) => {
+      const btn = document.createElement('div');
+      btn.className = 'cat-btn';
+      btn.innerHTML = `
+        <span class="cat-icon">${cat.icon}</span>
+        <div class="cat-name">${cat.name}</div>
+        <div class="cat-count">${cat.words.length} words</div>
+      `;
+      btn.addEventListener('click', () => openCategory(i));
+      gridEl.appendChild(btn);
+    });
+
+    function openCategory(index) {
+      const cat = CATEGORIES[index];
+      currentWords = cat.words;
+      currentIndex = 0;
+      titleEl.textContent = cat.icon + ' ' + cat.name;
+      showCard();
+      menuEl.style.display = 'none';
+      flashEl.style.display = 'block';
+    }
+
+    function showCard() {
+      const w = currentWords[currentIndex];
+      cardEl.classList.remove('flipped');
+      enWordEl.textContent = w.en;
+      esWordEl.textContent = w.es;
+      genderEl.textContent = w.gender || '';
+      exEsEl.textContent = w.exEs;
+      exEnEl.textContent = w.exEn;
+      counterEl.textContent = (currentIndex + 1) + ' / ' + currentWords.length;
+      prevBtn.disabled = currentIndex === 0;
+      nextBtn.disabled = currentIndex === currentWords.length - 1;
+    }
+
+    function navigate(dir) {
+      const next = currentIndex + dir;
+      if (next < 0 || next >= currentWords.length) return;
+      cardArea.classList.add(dir === 1 ? 'slide-left' : 'slide-right');
+      setTimeout(() => {
+        currentIndex = next;
+        showCard();
+      }, 150);
+      setTimeout(() => {
+        cardArea.classList.remove('slide-left', 'slide-right');
+      }, 300);
+    }
+
+    // Flip
+    cardEl.addEventListener('click', () => cardEl.classList.toggle('flipped'));
+
+    // Nav buttons
+    prevBtn.addEventListener('click', () => navigate(-1));
+    nextBtn.addEventListener('click', () => navigate(1));
+
+    // Back
+    backBtn.addEventListener('click', () => {
+      flashEl.style.display = 'none';
+      menuEl.style.display = 'block';
+    });
+
+    // Swipe support
+    let touchStartX = 0;
+    cardArea.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+    cardArea.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 50) navigate(dx < 0 ? 1 : -1);
+    });
+
+    // Keyboard
+    document.addEventListener('keydown', e => {
+      if (flashEl.style.display === 'none') return;
+      if (e.key === 'ArrowLeft') navigate(-1);
+      if (e.key === 'ArrowRight') navigate(1);
+      if (e.key === ' ') { e.preventDefault(); cardEl.classList.toggle('flipped'); }
+    });
+
+    // Service worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js');
     }
