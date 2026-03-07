@@ -40,7 +40,7 @@
     .cat-name { font-size: .95rem; font-weight: 600; }
     .cat-count { font-size: .75rem; color: #888; margin-top: .2rem; }
     .cat-progress { margin-top: .5rem; height: 4px; background: #0f3460; border-radius: 2px; overflow: hidden; }
-    .cat-progress-fill { height: 100%; background: #e94560; border-radius: 2px; transition: width .3s; }
+    .cat-progress-fill { height: 100%; background: #4ecca3; border-radius: 2px; transition: width .3s; }
     .cat-done { color: #4ecca3; font-size: .75rem; margin-top: .15rem; }
 
     /* --- Flashcard Screen --- */
@@ -89,9 +89,9 @@
     .card-front .tap-hint {
       margin-top: 1.2rem; font-size: .8rem; color: #555;
     }
-    .card-front .known-badge {
+    .card-front .level-badge {
       position: absolute; top: 1rem; right: 1.2rem;
-      font-size: .85rem; color: #4ecca3;
+      font-size: .8rem; font-weight: 600;
     }
     .card-back {
       transform: rotateY(180deg);
@@ -108,14 +108,28 @@
     .card-back .example span {
       display: block; margin-top: .35rem; color: #888; font-size: .85rem;
     }
-    .got-it-btn {
-      margin-top: 1.2rem; padding: .5rem 1.4rem;
-      background: #4ecca3; color: #1a1a2e; border: none; border-radius: 8px;
-      font-size: .9rem; font-weight: 600; cursor: pointer;
+    /* Confidence meter */
+    .confidence {
+      margin-top: 1.2rem; display: flex; align-items: center; gap: .6rem;
+    }
+    .conf-btn {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: #0f3460; border: 1px solid #1a3a6e; color: #fff;
+      font-size: 1.4rem; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
       transition: opacity .15s;
     }
-    .got-it-btn:active { opacity: .7; }
-    .got-it-btn.undo { background: transparent; color: #888; border: 1px solid #333; }
+    .conf-btn:active { opacity: .6; }
+    .conf-dots { display: flex; gap: 6px; align-items: center; }
+    .conf-dot {
+      width: 14px; height: 14px; border-radius: 50%;
+      background: #222; border: 1px solid #333;
+      transition: background .2s, border-color .2s, transform .2s;
+    }
+    .conf-dot.active { transform: scale(1.15); }
+    .conf-label {
+      font-size: .75rem; color: #888; margin-top: .4rem; text-align: center;
+    }
 
     /* Nav arrows */
     .nav-row {
@@ -167,7 +181,7 @@
     <div class="card-area" id="card-area">
       <div class="card" id="card">
         <div class="card-face card-front">
-          <div class="known-badge" id="known-badge"></div>
+          <div class="level-badge" id="level-badge"></div>
           <div class="en-word" id="en-word"></div>
           <div class="tap-hint">tap to flip</div>
         </div>
@@ -178,7 +192,12 @@
             <div id="ex-es"></div>
             <span id="ex-en"></span>
           </div>
-          <button class="got-it-btn" id="got-it-btn"></button>
+          <div class="confidence" id="confidence">
+            <button class="conf-btn" id="conf-minus">−</button>
+            <div class="conf-dots" id="conf-dots"></div>
+            <button class="conf-btn" id="conf-plus">+</button>
+          </div>
+          <div class="conf-label" id="conf-label"></div>
         </div>
       </div>
     </div>
@@ -205,28 +224,38 @@
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
     const backBtn = document.getElementById('back-btn');
-    const gotItBtn = document.getElementById('got-it-btn');
-    const knownBadge = document.getElementById('known-badge');
+    const levelBadge = document.getElementById('level-badge');
+    const confDots = document.getElementById('conf-dots');
+    const confLabel = document.getElementById('conf-label');
+    const confMinus = document.getElementById('conf-minus');
+    const confPlus = document.getElementById('conf-plus');
 
     let currentWords = [];
     let currentIndex = 0;
     let currentCatIndex = -1;
 
+    // 5 levels: red → orange → yellow → lime → green, then "learned" (level 6)
+    const LEVEL_COLORS = ['#333', '#e94560', '#e9832a', '#e9c93a', '#8dd93a', '#4ecca3'];
+    const LEVEL_MAX = 5; // levels 1-5 are the dots, 6 = learned
+
     // --- Progress (localStorage) ---
     function progressKey(catIdx, wordIdx) {
       return 'sp_' + catIdx + '_' + wordIdx;
     }
-    function isKnown(catIdx, wordIdx) {
-      return localStorage.getItem(progressKey(catIdx, wordIdx)) === '1';
+    function getLevel(catIdx, wordIdx) {
+      return parseInt(localStorage.getItem(progressKey(catIdx, wordIdx)) || '0', 10);
     }
-    function setKnown(catIdx, wordIdx, known) {
-      if (known) localStorage.setItem(progressKey(catIdx, wordIdx), '1');
-      else localStorage.removeItem(progressKey(catIdx, wordIdx));
+    function setLevel(catIdx, wordIdx, level) {
+      if (level <= 0) localStorage.removeItem(progressKey(catIdx, wordIdx));
+      else localStorage.setItem(progressKey(catIdx, wordIdx), String(level));
     }
-    function countKnown(catIdx) {
+    function isLearned(catIdx, wordIdx) {
+      return getLevel(catIdx, wordIdx) > LEVEL_MAX;
+    }
+    function countLearned(catIdx) {
       let n = 0;
       for (let i = 0; i < CATEGORIES[catIdx].words.length; i++) {
-        if (isKnown(catIdx, i)) n++;
+        if (isLearned(catIdx, i)) n++;
       }
       return n;
     }
@@ -235,7 +264,7 @@
     function renderGrid() {
       gridEl.innerHTML = '';
       CATEGORIES.forEach((cat, i) => {
-        const known = countKnown(i);
+        const known = countLearned(i);
         const total = cat.words.length;
         const pct = Math.round((known / total) * 100);
         const btn = document.createElement('div');
@@ -266,7 +295,8 @@
 
     function showCard() {
       const w = currentWords[currentIndex];
-      const known = isKnown(currentCatIndex, currentIndex);
+      const level = getLevel(currentCatIndex, currentIndex);
+      const learned = level > LEVEL_MAX;
       cardEl.classList.remove('flipped');
       enWordEl.textContent = w.en;
       esWordEl.textContent = w.es;
@@ -276,9 +306,32 @@
       counterEl.textContent = (currentIndex + 1) + ' / ' + currentWords.length;
       prevBtn.disabled = currentIndex === 0;
       nextBtn.disabled = currentIndex === currentWords.length - 1;
-      knownBadge.textContent = known ? '✓ learned' : '';
-      gotItBtn.textContent = known ? 'Undo' : 'Got it ✓';
-      gotItBtn.className = 'got-it-btn' + (known ? ' undo' : '');
+
+      // Front badge
+      if (learned) {
+        levelBadge.textContent = '✓ learned';
+        levelBadge.style.color = '#4ecca3';
+      } else if (level > 0) {
+        levelBadge.textContent = '●';
+        levelBadge.style.color = LEVEL_COLORS[level];
+      } else {
+        levelBadge.textContent = '';
+      }
+
+      // Confidence dots
+      confDots.innerHTML = '';
+      for (let i = 1; i <= LEVEL_MAX; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'conf-dot' + (i <= level ? ' active' : '');
+        dot.style.background = i <= level ? LEVEL_COLORS[i] : '#222';
+        dot.style.borderColor = i <= level ? LEVEL_COLORS[i] : '#333';
+        confDots.appendChild(dot);
+      }
+
+      // Label
+      if (learned) confLabel.textContent = 'Learned! Press − to review again';
+      else if (level === 0) confLabel.textContent = 'Rate your confidence';
+      else confLabel.textContent = level + ' / ' + LEVEL_MAX;
     }
 
     function navigate(dir) {
@@ -301,12 +354,22 @@
     prevBtn.addEventListener('click', () => navigate(-1));
     nextBtn.addEventListener('click', () => navigate(1));
 
-    // Got it / Undo
-    gotItBtn.addEventListener('click', e => {
+    // Confidence +/−
+    confPlus.addEventListener('click', e => {
       e.stopPropagation();
-      const known = isKnown(currentCatIndex, currentIndex);
-      setKnown(currentCatIndex, currentIndex, !known);
-      showCard();
+      const level = getLevel(currentCatIndex, currentIndex);
+      if (level <= LEVEL_MAX) {
+        setLevel(currentCatIndex, currentIndex, level + 1);
+        showCard();
+      }
+    });
+    confMinus.addEventListener('click', e => {
+      e.stopPropagation();
+      const level = getLevel(currentCatIndex, currentIndex);
+      if (level > 0) {
+        setLevel(currentCatIndex, currentIndex, level - 1);
+        showCard();
+      }
     });
 
     // Back
