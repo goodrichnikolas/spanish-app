@@ -39,6 +39,9 @@
     .cat-icon { font-size: 2rem; display: block; margin-bottom: .45rem; }
     .cat-name { font-size: .95rem; font-weight: 600; }
     .cat-count { font-size: .75rem; color: #888; margin-top: .2rem; }
+    .cat-progress { margin-top: .5rem; height: 4px; background: #0f3460; border-radius: 2px; overflow: hidden; }
+    .cat-progress-fill { height: 100%; background: #e94560; border-radius: 2px; transition: width .3s; }
+    .cat-done { color: #4ecca3; font-size: .75rem; margin-top: .15rem; }
 
     /* --- Flashcard Screen --- */
     #flashcard-screen { display: none; max-width: 480px; margin: 0 auto; padding: 1rem; }
@@ -86,6 +89,10 @@
     .card-front .tap-hint {
       margin-top: 1.2rem; font-size: .8rem; color: #555;
     }
+    .card-front .known-badge {
+      position: absolute; top: 1rem; right: 1.2rem;
+      font-size: .85rem; color: #4ecca3;
+    }
     .card-back {
       transform: rotateY(180deg);
     }
@@ -101,6 +108,14 @@
     .card-back .example span {
       display: block; margin-top: .35rem; color: #888; font-size: .85rem;
     }
+    .got-it-btn {
+      margin-top: 1.2rem; padding: .5rem 1.4rem;
+      background: #4ecca3; color: #1a1a2e; border: none; border-radius: 8px;
+      font-size: .9rem; font-weight: 600; cursor: pointer;
+      transition: opacity .15s;
+    }
+    .got-it-btn:active { opacity: .7; }
+    .got-it-btn.undo { background: transparent; color: #888; border: 1px solid #333; }
 
     /* Nav arrows */
     .nav-row {
@@ -152,6 +167,7 @@
     <div class="card-area" id="card-area">
       <div class="card" id="card">
         <div class="card-face card-front">
+          <div class="known-badge" id="known-badge"></div>
           <div class="en-word" id="en-word"></div>
           <div class="tap-hint">tap to flip</div>
         </div>
@@ -162,6 +178,7 @@
             <div id="ex-es"></div>
             <span id="ex-en"></span>
           </div>
+          <button class="got-it-btn" id="got-it-btn"></button>
         </div>
       </div>
     </div>
@@ -188,27 +205,59 @@
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
     const backBtn = document.getElementById('back-btn');
+    const gotItBtn = document.getElementById('got-it-btn');
+    const knownBadge = document.getElementById('known-badge');
 
     let currentWords = [];
     let currentIndex = 0;
+    let currentCatIndex = -1;
+
+    // --- Progress (localStorage) ---
+    function progressKey(catIdx, wordIdx) {
+      return 'sp_' + catIdx + '_' + wordIdx;
+    }
+    function isKnown(catIdx, wordIdx) {
+      return localStorage.getItem(progressKey(catIdx, wordIdx)) === '1';
+    }
+    function setKnown(catIdx, wordIdx, known) {
+      if (known) localStorage.setItem(progressKey(catIdx, wordIdx), '1');
+      else localStorage.removeItem(progressKey(catIdx, wordIdx));
+    }
+    function countKnown(catIdx) {
+      let n = 0;
+      for (let i = 0; i < CATEGORIES[catIdx].words.length; i++) {
+        if (isKnown(catIdx, i)) n++;
+      }
+      return n;
+    }
 
     // Build category grid
-    CATEGORIES.forEach((cat, i) => {
-      const btn = document.createElement('div');
-      btn.className = 'cat-btn';
-      btn.innerHTML = `
-        <span class="cat-icon">${cat.icon}</span>
-        <div class="cat-name">${cat.name}</div>
-        <div class="cat-count">${cat.words.length} words</div>
-      `;
-      btn.addEventListener('click', () => openCategory(i));
-      gridEl.appendChild(btn);
-    });
+    function renderGrid() {
+      gridEl.innerHTML = '';
+      CATEGORIES.forEach((cat, i) => {
+        const known = countKnown(i);
+        const total = cat.words.length;
+        const pct = Math.round((known / total) * 100);
+        const btn = document.createElement('div');
+        btn.className = 'cat-btn';
+        btn.innerHTML = `
+          <span class="cat-icon">${cat.icon}</span>
+          <div class="cat-name">${cat.name}</div>
+          <div class="cat-count">${known} / ${total}</div>
+          <div class="cat-progress"><div class="cat-progress-fill" style="width:${pct}%"></div></div>
+          ${known === total ? '<div class="cat-done">Complete!</div>' : ''}
+        `;
+        btn.addEventListener('click', () => openCategory(i));
+        gridEl.appendChild(btn);
+      });
+    }
+    renderGrid();
 
     function openCategory(index) {
       const cat = CATEGORIES[index];
       currentWords = cat.words;
       currentIndex = 0;
+      currentCatIndex = index;
       titleEl.textContent = cat.icon + ' ' + cat.name;
       showCard();
       menuEl.style.display = 'none';
@@ -217,6 +266,7 @@
 
     function showCard() {
       const w = currentWords[currentIndex];
+      const known = isKnown(currentCatIndex, currentIndex);
       cardEl.classList.remove('flipped');
       enWordEl.textContent = w.en;
       esWordEl.textContent = w.es;
@@ -226,6 +276,9 @@
       counterEl.textContent = (currentIndex + 1) + ' / ' + currentWords.length;
       prevBtn.disabled = currentIndex === 0;
       nextBtn.disabled = currentIndex === currentWords.length - 1;
+      knownBadge.textContent = known ? '✓ learned' : '';
+      gotItBtn.textContent = known ? 'Undo' : 'Got it ✓';
+      gotItBtn.className = 'got-it-btn' + (known ? ' undo' : '');
     }
 
     function navigate(dir) {
@@ -248,10 +301,19 @@
     prevBtn.addEventListener('click', () => navigate(-1));
     nextBtn.addEventListener('click', () => navigate(1));
 
+    // Got it / Undo
+    gotItBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      const known = isKnown(currentCatIndex, currentIndex);
+      setKnown(currentCatIndex, currentIndex, !known);
+      showCard();
+    });
+
     // Back
     backBtn.addEventListener('click', () => {
       flashEl.style.display = 'none';
       menuEl.style.display = 'block';
+      renderGrid();
     });
 
     // Swipe support
