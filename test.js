@@ -253,19 +253,29 @@ assert('Clicking again removes .flipped', () => {
   ok(!document.getElementById('card').classList.contains('flipped'));
 });
 
-// ─── CONJUGATION TABLE ───
-console.log('\nConjugation table:');
+// ─── CONJUGATION OVERLAY ───
+console.log('\nConjugation overlay:');
 
-// First word in Emotions is "to be fed up" (a verb)
-assert('Verb card: conj-section is visible', () => {
-  // First word in Emotions is "to be fed up" (a verb) — we should be on it
+assert('Verb card shows Conjugations button', () => {
+  window.currentIndex = 0;
+  window.showCard();
   const word = document.getElementById('en-word').textContent;
   ok(word.startsWith('to '), `Current word "${word}" is not a verb`);
-  const display = document.getElementById('conj-section').style.display;
-  ok(display !== 'none', `conj-section display is "${display}"`);
+  const display = document.getElementById('conj-toggle').style.display;
+  ok(display !== 'none', `Button display is "${display}"`);
 });
 
-assert('6 tense tabs rendered', () => {
+assert('Clicking Conjugations button opens overlay', () => {
+  document.getElementById('conj-toggle').click();
+  ok(document.getElementById('conj-overlay').classList.contains('open'));
+});
+
+assert('Overlay shows verb name', () => {
+  const title = document.getElementById('conj-verb-title').textContent;
+  ok(title.length > 0, 'Verb title should not be empty');
+});
+
+assert('6 tense tabs rendered in overlay', () => {
   eq(document.querySelectorAll('.conj-tab').length, 6);
 });
 
@@ -275,8 +285,7 @@ assert('Tab labels match expected tenses', () => {
 });
 
 assert('Presente tab is active by default', () => {
-  const active = document.querySelector('.conj-tab.active');
-  eq(active.textContent, 'Presente');
+  eq(document.querySelector('.conj-tab.active').textContent, 'Presente');
 });
 
 assert('Table has 6 rows with pronouns', () => {
@@ -295,11 +304,10 @@ assert('Table shows conjugated forms', () => {
   ok(forms.every(f => f.length > 0), 'All forms should be non-empty');
 });
 
-assert('Clicking Pretérito tab changes active tab and table content', () => {
+assert('Clicking Pretérito tab changes table content', () => {
   const presenteForms = [...document.querySelectorAll('#conj-body tr')].map(
     r => r.querySelectorAll('td')[1].textContent
   );
-  // Click second tab
   document.querySelectorAll('.conj-tab')[1].click();
   eq(document.querySelector('.conj-tab.active').textContent, 'Pretérito');
   const preteritoForms = [...document.querySelectorAll('#conj-body tr')].map(
@@ -309,7 +317,7 @@ assert('Clicking Pretérito tab changes active tab and table content', () => {
     'Forms should differ between tenses');
 });
 
-assert('Clicking each tab switches forms', () => {
+assert('All 6 tabs produce different forms', () => {
   const allSets = [];
   document.querySelectorAll('.conj-tab').forEach(tab => {
     tab.click();
@@ -322,8 +330,12 @@ assert('Clicking each tab switches forms', () => {
   eq(unique.size, 6, `Expected 6 unique form sets, got ${unique.size}`);
 });
 
-// Navigate to a non-verb
-assert('Non-verb card hides conjugation section', () => {
+assert('Close button closes overlay', () => {
+  document.getElementById('conj-close').click();
+  ok(!document.getElementById('conj-overlay').classList.contains('open'));
+});
+
+assert('Non-verb card hides Conjugations button', () => {
   const w = window.currentWords;
   let found = false;
   for (let i = 0; i < w.length; i++) {
@@ -335,11 +347,7 @@ assert('Non-verb card hides conjugation section', () => {
     }
   }
   ok(found, 'No non-verb found in category');
-  eq(document.getElementById('conj-section').style.display, 'none');
-});
-
-assert('card-area loses .tall class for non-verb', () => {
-  ok(!document.getElementById('card-area').classList.contains('tall'));
+  eq(document.getElementById('conj-toggle').style.display, 'none');
 });
 
 // ─── NAVIGATION ───

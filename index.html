@@ -61,9 +61,8 @@
       perspective: 800px;
       margin-bottom: 1.2rem;
       touch-action: pan-y;
+      height: 340px;
     }
-    .card-area { height: 340px; }
-    .card-area.tall { height: 520px; }
     .card {
       width: 100%; height: 100%;
       position: relative;
@@ -135,16 +134,41 @@
       font-size: .75rem; color: #888; margin-top: .4rem; text-align: center;
     }
 
-    /* Conjugation section */
-    .conj-section { margin-top: 1rem; width: 100%; }
+    /* Conjugation button */
+    .conj-toggle {
+      display: none; margin-top: .8rem;
+      padding: .5rem 1.2rem; border-radius: 8px;
+      background: #0f3460; border: 1px solid #1a3a6e; color: #fff;
+      font-size: .85rem; font-weight: 600; cursor: pointer;
+    }
+    .conj-toggle:active { opacity: .7; }
+
+    /* Conjugation overlay */
+    .conj-overlay {
+      display: none; position: fixed; inset: 0; z-index: 100;
+      background: #1a1a2e; padding: 1rem;
+      flex-direction: column; overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .conj-overlay.open { display: flex; }
+    .conj-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .conj-header h2 { font-size: 1.2rem; color: #e94560; }
+    .conj-close {
+      background: none; border: none; color: #fff; font-size: 1.5rem;
+      cursor: pointer; padding: .25rem .5rem;
+    }
     .conj-tabs {
       display: flex; gap: 0; overflow-x: auto;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none; border-bottom: 1px solid #0f3460;
+      margin-bottom: .5rem; flex-shrink: 0;
     }
     .conj-tabs::-webkit-scrollbar { display: none; }
     .conj-tab {
-      padding: .35rem .55rem; font-size: .65rem; font-weight: 600;
+      padding: .5rem .7rem; font-size: .8rem; font-weight: 600;
       color: #666; background: none; border: none;
       cursor: pointer; white-space: nowrap;
       border-bottom: 2px solid transparent;
@@ -152,15 +176,15 @@
     }
     .conj-tab.active { color: #e94560; border-bottom-color: #e94560; }
     .conj-table {
-      width: 100%; border-collapse: collapse; font-size: .8rem;
-      margin-top: .4rem;
+      width: 100%; max-width: 400px; border-collapse: collapse;
+      font-size: 1rem; margin: 0 auto;
     }
     .conj-table td {
-      padding: .2rem .4rem;
+      padding: .5rem .6rem;
       border-bottom: 1px solid #0f3460;
     }
     .conj-table td:first-child {
-      color: #888; text-align: right; width: 40%; font-size: .75rem;
+      color: #888; text-align: right; width: 40%; font-size: .9rem;
     }
     .conj-table td:last-child {
       color: #e94560; font-weight: 600;
@@ -227,12 +251,7 @@
             <div id="ex-es"></div>
             <span id="ex-en"></span>
           </div>
-          <div class="conj-section" id="conj-section">
-            <div class="conj-tabs" id="conj-tabs"></div>
-            <table class="conj-table">
-              <tbody id="conj-body"></tbody>
-            </table>
-          </div>
+          <button class="conj-toggle" id="conj-toggle">Conjugations</button>
           <div class="confidence" id="confidence">
             <button class="conf-btn" id="conf-minus">−</button>
             <div class="conf-dots" id="conf-dots"></div>
@@ -246,6 +265,18 @@
       <button class="nav-btn" id="prev-btn" aria-label="Previous card">&#8592;</button>
       <button class="nav-btn" id="next-btn" aria-label="Next card">&#8594;</button>
     </div>
+  </div>
+
+  <!-- Conjugation Overlay -->
+  <div class="conj-overlay" id="conj-overlay">
+    <div class="conj-header">
+      <h2 id="conj-verb-title"></h2>
+      <button class="conj-close" id="conj-close" aria-label="Close">&#10005;</button>
+    </div>
+    <div class="conj-tabs" id="conj-tabs"></div>
+    <table class="conj-table">
+      <tbody id="conj-body"></tbody>
+    </table>
   </div>
 
   <script src="data.js"></script>
@@ -270,7 +301,10 @@
     const confLabel = document.getElementById('conf-label');
     const confMinus = document.getElementById('conf-minus');
     const confPlus = document.getElementById('conf-plus');
-    const conjSection = document.getElementById('conj-section');
+    const conjToggle = document.getElementById('conj-toggle');
+    const conjOverlay = document.getElementById('conj-overlay');
+    const conjClose = document.getElementById('conj-close');
+    const conjVerbTitle = document.getElementById('conj-verb-title');
     const conjTabs = document.getElementById('conj-tabs');
     const conjBody = document.getElementById('conj-body');
     const PRONOUNS = ['yo', 'tú', 'él/ella', 'nosotros', 'vosotros', 'ellos'];
@@ -380,19 +414,13 @@
       else if (level === 0) confLabel.textContent = 'Rate your confidence';
       else confLabel.textContent = level + ' / ' + LEVEL_MAX;
 
-      // Conjugation tabs + table
+      // Conjugation button (verbs only)
       if (w.conj && w.conj.tenses) {
         currentTenses = w.conj.tenses;
-        const tenseNames = Object.keys(currentTenses);
-        activeTense = tenseNames[0];
-        renderConjTabs(tenseNames);
-        renderConjBody(currentTenses[activeTense]);
-        conjSection.style.display = '';
-        cardArea.classList.add('tall');
+        conjToggle.style.display = 'inline-block';
       } else {
         currentTenses = null;
-        conjSection.style.display = 'none';
-        cardArea.classList.remove('tall');
+        conjToggle.style.display = 'none';
       }
     }
 
@@ -421,6 +449,23 @@
         conjBody.appendChild(tr);
       });
     }
+
+    // Open conjugation overlay
+    conjToggle.addEventListener('click', e => {
+      e.stopPropagation();
+      if (!currentTenses) return;
+      const w = currentWords[currentIndex];
+      conjVerbTitle.textContent = w.conj.verb;
+      const tenseNames = Object.keys(currentTenses);
+      activeTense = tenseNames[0];
+      renderConjTabs(tenseNames);
+      renderConjBody(currentTenses[activeTense]);
+      conjOverlay.classList.add('open');
+    });
+
+    conjClose.addEventListener('click', () => {
+      conjOverlay.classList.remove('open');
+    });
 
     function navigate(dir) {
       const next = currentIndex + dir;
