@@ -134,17 +134,28 @@
       font-size: .75rem; color: #888; margin-top: .4rem; text-align: center;
     }
 
-    /* Conjugation table */
-    .conj-table {
-      margin-top: 1rem; width: 100%;
-      border-collapse: collapse; font-size: .8rem;
+    /* Conjugation section */
+    .conj-section { margin-top: 1rem; width: 100%; }
+    .conj-tabs {
+      display: flex; gap: 0; overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none; border-bottom: 1px solid #0f3460;
     }
-    .conj-table caption {
-      font-size: .7rem; color: #666; text-transform: uppercase;
-      letter-spacing: .05em; padding-bottom: .35rem; text-align: left;
+    .conj-tabs::-webkit-scrollbar { display: none; }
+    .conj-tab {
+      padding: .35rem .55rem; font-size: .65rem; font-weight: 600;
+      color: #666; background: none; border: none;
+      cursor: pointer; white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: color .15s, border-color .15s;
+    }
+    .conj-tab.active { color: #e94560; border-bottom-color: #e94560; }
+    .conj-table {
+      width: 100%; border-collapse: collapse; font-size: .8rem;
+      margin-top: .4rem;
     }
     .conj-table td {
-      padding: .25rem .4rem;
+      padding: .2rem .4rem;
       border-bottom: 1px solid #0f3460;
     }
     .conj-table td:first-child {
@@ -215,10 +226,12 @@
             <div id="ex-es"></div>
             <span id="ex-en"></span>
           </div>
-          <table class="conj-table" id="conj-table">
-            <caption>Presente</caption>
-            <tbody id="conj-body"></tbody>
-          </table>
+          <div class="conj-section" id="conj-section">
+            <div class="conj-tabs" id="conj-tabs"></div>
+            <table class="conj-table">
+              <tbody id="conj-body"></tbody>
+            </table>
+          </div>
           <div class="confidence" id="confidence">
             <button class="conf-btn" id="conf-minus">−</button>
             <div class="conf-dots" id="conf-dots"></div>
@@ -256,9 +269,12 @@
     const confLabel = document.getElementById('conf-label');
     const confMinus = document.getElementById('conf-minus');
     const confPlus = document.getElementById('conf-plus');
-    const conjTable = document.getElementById('conj-table');
+    const conjSection = document.getElementById('conj-section');
+    const conjTabs = document.getElementById('conj-tabs');
     const conjBody = document.getElementById('conj-body');
     const PRONOUNS = ['yo', 'tú', 'él/ella', 'nosotros', 'vosotros', 'ellos'];
+    let currentTenses = null;
+    let activeTense = null;
 
     let currentWords = [];
     let currentIndex = 0;
@@ -363,20 +379,46 @@
       else if (level === 0) confLabel.textContent = 'Rate your confidence';
       else confLabel.textContent = level + ' / ' + LEVEL_MAX;
 
-      // Conjugation table
-      if (w.conj) {
-        conjBody.innerHTML = '';
-        w.conj.forms.forEach((form, i) => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = '<td>' + PRONOUNS[i] + '</td><td>' + form + '</td>';
-          conjBody.appendChild(tr);
-        });
-        conjTable.style.display = '';
+      // Conjugation tabs + table
+      if (w.conj && w.conj.tenses) {
+        currentTenses = w.conj.tenses;
+        const tenseNames = Object.keys(currentTenses);
+        activeTense = tenseNames[0];
+        renderConjTabs(tenseNames);
+        renderConjBody(currentTenses[activeTense]);
+        conjSection.style.display = '';
         cardArea.classList.add('tall');
       } else {
-        conjTable.style.display = 'none';
+        currentTenses = null;
+        conjSection.style.display = 'none';
         cardArea.classList.remove('tall');
       }
+    }
+
+    function renderConjTabs(tenseNames) {
+      conjTabs.innerHTML = '';
+      tenseNames.forEach(name => {
+        const btn = document.createElement('button');
+        btn.className = 'conj-tab' + (name === activeTense ? ' active' : '');
+        btn.textContent = name;
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          activeTense = name;
+          conjTabs.querySelectorAll('.conj-tab').forEach(t => t.classList.remove('active'));
+          btn.classList.add('active');
+          renderConjBody(currentTenses[name]);
+        });
+        conjTabs.appendChild(btn);
+      });
+    }
+
+    function renderConjBody(forms) {
+      conjBody.innerHTML = '';
+      forms.forEach((form, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = '<td>' + PRONOUNS[i] + '</td><td>' + form + '</td>';
+        conjBody.appendChild(tr);
+      });
     }
 
     function navigate(dir) {

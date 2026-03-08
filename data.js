@@ -11,14 +11,56 @@ const CATEGORIES = [
         "exEs": "Estoy harto de este tráfico.",
         "conj": {
           "verb": "estar",
-          "forms": [
-            "estoy",
-            "estás",
-            "está",
-            "estamos",
-            "estáis",
-            "están"
-          ]
+          "tenses": {
+            "Presente": [
+              "estoy",
+              "estás",
+              "está",
+              "estamos",
+              "estáis",
+              "están"
+            ],
+            "Pretérito": [
+              "estuve",
+              "estuviste",
+              "estuvo",
+              "estuvimos",
+              "estuvisteis",
+              "estuvieron"
+            ],
+            "Imperfecto": [
+              "estaba",
+              "estabas",
+              "estaba",
+              "estábamos",
+              "estabais",
+              "estaban"
+            ],
+            "Futuro": [
+              "estaré",
+              "estarás",
+              "estará",
+              "estaremos",
+              "estaréis",
+              "estarán"
+            ],
+            "Condicional": [
+              "estaría",
+              "estarías",
+              "estaría",
+              "estaríamos",
+              "estaríais",
+              "estarían"
+            ],
+            "Subjuntivo": [
+              "esté",
+              "estés",
+              "esté",
+              "estemos",
+              "estéis",
+              "estén"
+            ]
+          }
         }
       },
       {
@@ -43,14 +85,56 @@ const CATEGORIES = [
         "exEs": "Tengo vergüenza de cantar en público.",
         "conj": {
           "verb": "tener",
-          "forms": [
-            "tengo",
-            "tienes",
-            "tiene",
-            "tenemos",
-            "tenéis",
-            "tienen"
-          ]
+          "tenses": {
+            "Presente": [
+              "tengo",
+              "tienes",
+              "tiene",
+              "tenemos",
+              "tenéis",
+              "tienen"
+            ],
+            "Pretérito": [
+              "tuve",
+              "tuviste",
+              "tuvo",
+              "tuvimos",
+              "tuvisteis",
+              "tuvieron"
+            ],
+            "Imperfecto": [
+              "tenía",
+              "tenías",
+              "tenía",
+              "teníamos",
+              "teníais",
+              "tenían"
+            ],
+            "Futuro": [
+              "tendré",
+              "tendrás",
+              "tendrá",
+              "tendremos",
+              "tendréis",
+              "tendrán"
+            ],
+            "Condicional": [
+              "tendría",
+              "tendrías",
+              "tendría",
+              "tendríamos",
+              "tendríais",
+              "tendrían"
+            ],
+            "Subjuntivo": [
+              "tenga",
+              "tengas",
+              "tenga",
+              "tengamos",
+              "tengáis",
+              "tengan"
+            ]
+          }
         }
       },
       {
@@ -75,14 +159,56 @@ const CATEGORIES = [
         "exEs": "No te enfades por cosas pequeñas.",
         "conj": {
           "verb": "enfadarse",
-          "forms": [
-            "me enfado",
-            "te enfadas",
-            "se enfada",
-            "nos enfadamos",
-            "os enfadáis",
-            "se enfadan"
-          ]
+          "tenses": {
+            "Presente": [
+              "me enfado",
+              "te enfadas",
+              "se enfada",
+              "nos enfadamos",
+              "os enfadáis",
+              "se enfadan"
+            ],
+            "Pretérito": [
+              "me enfadé",
+              "te enfadaste",
+              "se enfadó",
+              "nos enfadamos",
+              "os enfadsteis",
+              "se enfadaron"
+            ],
+            "Imperfecto": [
+              "me enfadaba",
+              "te enfadabas",
+              "se enfadaba",
+              "nos enfadábamos",
+              "os enfadabais",
+              "se enfadaban"
+            ],
+            "Futuro": [
+              "me enfadaré",
+              "te enfadarás",
+              "se enfadará",
+              "nos enfadaremos",
+              "os enfadaréis",
+              "se enfadarán"
+            ],
+            "Condicional": [
+              "me enfadaría",
+              "te enfadarías",
+              "se enfadaría",
+              "nos enfadaríamos",
+              "os enfadaríais",
+              "se enfadarían"
+            ],
+            "Subjuntivo": [
+              "me enfade",
+              "te enfades",
+              "se enfade",
+              "nos enfademos",
+              "os enfadéis",
+              "se enfaden"
+            ]
+          }
         }
       },
       {
@@ -107,14 +233,56 @@ const CATEGORIES = [
         "exEs": "Echo mucho de menos a mi familia.",
         "conj": {
           "verb": "echar",
-          "forms": [
-            "echo",
-            "echas",
-            "echa",
-            "echamos",
-            "echáis",
-            "echan"
-          ]
+          "tenses": {
+            "Presente": [
+              "echo",
+              "echas",
+              "echa",
+              "echamos",
+              "echáis",
+              "echan"
+            ],
+            "Pretérito": [
+              "eché",
+              "echaste",
+              "echó",
+              "echamos",
+              "echsteis",
+              "echaron"
+            ],
+            "Imperfecto": [
+              "echaba",
+              "echabas",
+              "echaba",
+              "echábamos",
+              "echabais",
+              "echaban"
+            ],
+            "Futuro": [
+              "echaré",
+              "echarás",
+              "echará",
+              "echaremos",
+              "echaréis",
+              "echarán"
+            ],
+            "Condicional": [
+              "echaría",
+              "echarías",
+              "echaría",
+              "echaríamos",
+              "echaríais",
+              "echarían"
+            ],
+            "Subjuntivo": [
+              "eche",
+              "eches",
+              "eche",
+              "echemos",
+              "echéis",
+              "echen"
+            ]
+          }
         }
       },
       {
@@ -145,14 +313,56 @@ const CATEGORIES = [
         "exEs": "Quiero solicitar ese puesto.",
         "conj": {
           "verb": "solicitar",
-          "forms": [
-            "solicito",
-            "solicitas",
-            "solicita",
-            "solicitamos",
-            "solicitáis",
-            "solicitan"
-          ]
+          "tenses": {
+            "Presente": [
+              "solicito",
+              "solicitas",
+              "solicita",
+              "solicitamos",
+              "solicitáis",
+              "solicitan"
+            ],
+            "Pretérito": [
+              "solicité",
+              "solicitaste",
+              "solicitó",
+              "solicitamos",
+              "solicitsteis",
+              "solicitaron"
+            ],
+            "Imperfecto": [
+              "solicitaba",
+              "solicitabas",
+              "solicitaba",
+              "solicitábamos",
+              "solicitabais",
+              "solicitaban"
+            ],
+            "Futuro": [
+              "solicitaré",
+              "solicitarás",
+              "solicitará",
+              "solicitaremos",
+              "solicitaréis",
+              "solicitarán"
+            ],
+            "Condicional": [
+              "solicitaría",
+              "solicitarías",
+              "solicitaría",
+              "solicitaríamos",
+              "solicitaríais",
+              "solicitarían"
+            ],
+            "Subjuntivo": [
+              "solicite",
+              "solicites",
+              "solicite",
+              "solicitemos",
+              "solicitéis",
+              "soliciten"
+            ]
+          }
         }
       },
       {
@@ -163,14 +373,56 @@ const CATEGORIES = [
         "exEs": "Despidieron a veinte empleados.",
         "conj": {
           "verb": "despedir",
-          "forms": [
-            "despido",
-            "despides",
-            "despide",
-            "despedimos",
-            "despedís",
-            "despiden"
-          ]
+          "tenses": {
+            "Presente": [
+              "despido",
+              "despides",
+              "despide",
+              "despedimos",
+              "despedís",
+              "despiden"
+            ],
+            "Pretérito": [
+              "despedí",
+              "despediste",
+              "despidió",
+              "despedimos",
+              "despedisteis",
+              "despidieron"
+            ],
+            "Imperfecto": [
+              "despedía",
+              "despedías",
+              "despedía",
+              "despedíamos",
+              "despedíais",
+              "despedían"
+            ],
+            "Futuro": [
+              "despediré",
+              "despedirás",
+              "despedirá",
+              "despediremos",
+              "despediréis",
+              "despedirán"
+            ],
+            "Condicional": [
+              "despediría",
+              "despedirías",
+              "despediría",
+              "despediríamos",
+              "despediríais",
+              "despedirían"
+            ],
+            "Subjuntivo": [
+              "despida",
+              "despidas",
+              "despida",
+              "despidamos",
+              "despidáis",
+              "despidan"
+            ]
+          }
         }
       },
       {
@@ -195,14 +447,56 @@ const CATEGORIES = [
         "exEs": "Mi padre se jubiló el año pasado.",
         "conj": {
           "verb": "jubilarse",
-          "forms": [
-            "me jubilo",
-            "te jubilas",
-            "se jubila",
-            "nos jubilamos",
-            "os jubiláis",
-            "se jubilan"
-          ]
+          "tenses": {
+            "Presente": [
+              "me jubilo",
+              "te jubilas",
+              "se jubila",
+              "nos jubilamos",
+              "os jubiláis",
+              "se jubilan"
+            ],
+            "Pretérito": [
+              "me jubilé",
+              "te jubilaste",
+              "se jubiló",
+              "nos jubilamos",
+              "os jubilsteis",
+              "se jubilaron"
+            ],
+            "Imperfecto": [
+              "me jubilaba",
+              "te jubilabas",
+              "se jubilaba",
+              "nos jubilábamos",
+              "os jubilabais",
+              "se jubilaban"
+            ],
+            "Futuro": [
+              "me jubilaré",
+              "te jubilarás",
+              "se jubilará",
+              "nos jubilaremos",
+              "os jubilaréis",
+              "se jubilarán"
+            ],
+            "Condicional": [
+              "me jubilaría",
+              "te jubilarías",
+              "se jubilaría",
+              "nos jubilaríamos",
+              "os jubilaríais",
+              "se jubilarían"
+            ],
+            "Subjuntivo": [
+              "me jubile",
+              "te jubiles",
+              "se jubile",
+              "nos jubilemos",
+              "os jubiléis",
+              "se jubilen"
+            ]
+          }
         }
       },
       {
@@ -227,14 +521,56 @@ const CATEGORIES = [
         "exEs": "¿Quién se encarga de este proyecto?",
         "conj": {
           "verb": "encargarse",
-          "forms": [
-            "me encargo",
-            "te encargas",
-            "se encarga",
-            "nos encargamos",
-            "os encargáis",
-            "se encargan"
-          ]
+          "tenses": {
+            "Presente": [
+              "me encargo",
+              "te encargas",
+              "se encarga",
+              "nos encargamos",
+              "os encargáis",
+              "se encargan"
+            ],
+            "Pretérito": [
+              "me encarué",
+              "te encargaste",
+              "se encargó",
+              "nos encargamos",
+              "os encargsteis",
+              "se encargaron"
+            ],
+            "Imperfecto": [
+              "me encargaba",
+              "te encargabas",
+              "se encargaba",
+              "nos encargábamos",
+              "os encargabais",
+              "se encargaban"
+            ],
+            "Futuro": [
+              "me encargaré",
+              "te encargarás",
+              "se encargará",
+              "nos encargaremos",
+              "os encargaréis",
+              "se encargarán"
+            ],
+            "Condicional": [
+              "me encargaría",
+              "te encargarías",
+              "se encargaría",
+              "nos encargaríamos",
+              "os encargaríais",
+              "se encargarían"
+            ],
+            "Subjuntivo": [
+              "me encarue",
+              "te encarues",
+              "se encarue",
+              "nos encaruemos",
+              "os encaruéis",
+              "se encaruen"
+            ]
+          }
         }
       },
       {
@@ -266,14 +602,56 @@ const CATEGORIES = [
         "exEs": "Ella gana un buen sueldo.",
         "conj": {
           "verb": "ganar",
-          "forms": [
-            "gano",
-            "ganas",
-            "gana",
-            "ganamos",
-            "ganáis",
-            "ganan"
-          ]
+          "tenses": {
+            "Presente": [
+              "gano",
+              "ganas",
+              "gana",
+              "ganamos",
+              "ganáis",
+              "ganan"
+            ],
+            "Pretérito": [
+              "gané",
+              "ganaste",
+              "ganó",
+              "ganamos",
+              "gansteis",
+              "ganaron"
+            ],
+            "Imperfecto": [
+              "ganaba",
+              "ganabas",
+              "ganaba",
+              "ganábamos",
+              "ganabais",
+              "ganaban"
+            ],
+            "Futuro": [
+              "ganaré",
+              "ganarás",
+              "ganará",
+              "ganaremos",
+              "ganaréis",
+              "ganarán"
+            ],
+            "Condicional": [
+              "ganaría",
+              "ganarías",
+              "ganaría",
+              "ganaríamos",
+              "ganaríais",
+              "ganarían"
+            ],
+            "Subjuntivo": [
+              "gane",
+              "ganes",
+              "gane",
+              "ganemos",
+              "ganéis",
+              "ganen"
+            ]
+          }
         }
       }
     ]
@@ -304,14 +682,56 @@ const CATEGORIES = [
         "exEs": "Se desmayó por el calor.",
         "conj": {
           "verb": "desmayarse",
-          "forms": [
-            "me desmayo",
-            "te desmayas",
-            "se desmaya",
-            "nos desmayamos",
-            "os desmayáis",
-            "se desmayan"
-          ]
+          "tenses": {
+            "Presente": [
+              "me desmayo",
+              "te desmayas",
+              "se desmaya",
+              "nos desmayamos",
+              "os desmayáis",
+              "se desmayan"
+            ],
+            "Pretérito": [
+              "me desmayé",
+              "te desmayaste",
+              "se desmayó",
+              "nos desmayamos",
+              "os desmaysteis",
+              "se desmayaron"
+            ],
+            "Imperfecto": [
+              "me desmayaba",
+              "te desmayabas",
+              "se desmayaba",
+              "nos desmayábamos",
+              "os desmayabais",
+              "se desmayaban"
+            ],
+            "Futuro": [
+              "me desmayaré",
+              "te desmayarás",
+              "se desmayará",
+              "nos desmayaremos",
+              "os desmayaréis",
+              "se desmayarán"
+            ],
+            "Condicional": [
+              "me desmayaría",
+              "te desmayarías",
+              "se desmayaría",
+              "nos desmayaríamos",
+              "os desmayaríais",
+              "se desmayarían"
+            ],
+            "Subjuntivo": [
+              "me desmaye",
+              "te desmayes",
+              "se desmaye",
+              "nos desmayemos",
+              "os desmayéis",
+              "se desmayen"
+            ]
+          }
         }
       },
       {
@@ -329,14 +749,56 @@ const CATEGORIES = [
         "exEs": "Esta medicina curará la infección.",
         "conj": {
           "verb": "curar",
-          "forms": [
-            "curo",
-            "curas",
-            "cura",
-            "curamos",
-            "curáis",
-            "curan"
-          ]
+          "tenses": {
+            "Presente": [
+              "curo",
+              "curas",
+              "cura",
+              "curamos",
+              "curáis",
+              "curan"
+            ],
+            "Pretérito": [
+              "curé",
+              "curaste",
+              "curó",
+              "curamos",
+              "cursteis",
+              "curaron"
+            ],
+            "Imperfecto": [
+              "curaba",
+              "curabas",
+              "curaba",
+              "curábamos",
+              "curabais",
+              "curaban"
+            ],
+            "Futuro": [
+              "curaré",
+              "curarás",
+              "curará",
+              "curaremos",
+              "curaréis",
+              "curarán"
+            ],
+            "Condicional": [
+              "curaría",
+              "curarías",
+              "curaría",
+              "curaríamos",
+              "curaríais",
+              "curarían"
+            ],
+            "Subjuntivo": [
+              "cure",
+              "cures",
+              "cure",
+              "curemos",
+              "curéis",
+              "curen"
+            ]
+          }
         }
       },
       {
@@ -354,14 +816,56 @@ const CATEGORIES = [
         "exEs": "Te está sangrando la nariz.",
         "conj": {
           "verb": "sangrar",
-          "forms": [
-            "sangro",
-            "sangras",
-            "sangra",
-            "sangramos",
-            "sangráis",
-            "sangran"
-          ]
+          "tenses": {
+            "Presente": [
+              "sangro",
+              "sangras",
+              "sangra",
+              "sangramos",
+              "sangráis",
+              "sangran"
+            ],
+            "Pretérito": [
+              "sangré",
+              "sangraste",
+              "sangró",
+              "sangramos",
+              "sangrsteis",
+              "sangraron"
+            ],
+            "Imperfecto": [
+              "sangraba",
+              "sangrabas",
+              "sangraba",
+              "sangrábamos",
+              "sangrabais",
+              "sangraban"
+            ],
+            "Futuro": [
+              "sangraré",
+              "sangrarás",
+              "sangrará",
+              "sangraremos",
+              "sangraréis",
+              "sangrarán"
+            ],
+            "Condicional": [
+              "sangraría",
+              "sangrarías",
+              "sangraría",
+              "sangraríamos",
+              "sangraríais",
+              "sangrarían"
+            ],
+            "Subjuntivo": [
+              "sangre",
+              "sangres",
+              "sangre",
+              "sangremos",
+              "sangréis",
+              "sangren"
+            ]
+          }
         }
       },
       {
@@ -386,14 +890,56 @@ const CATEGORIES = [
         "exEs": "No puedo dejar de estornudar.",
         "conj": {
           "verb": "estornudar",
-          "forms": [
-            "estornudo",
-            "estornudas",
-            "estornuda",
-            "estornudamos",
-            "estornudáis",
-            "estornudan"
-          ]
+          "tenses": {
+            "Presente": [
+              "estornudo",
+              "estornudas",
+              "estornuda",
+              "estornudamos",
+              "estornudáis",
+              "estornudan"
+            ],
+            "Pretérito": [
+              "estornudé",
+              "estornudaste",
+              "estornudó",
+              "estornudamos",
+              "estornudsteis",
+              "estornudaron"
+            ],
+            "Imperfecto": [
+              "estornudaba",
+              "estornudabas",
+              "estornudaba",
+              "estornudábamos",
+              "estornudabais",
+              "estornudaban"
+            ],
+            "Futuro": [
+              "estornudaré",
+              "estornudarás",
+              "estornudará",
+              "estornudaremos",
+              "estornudaréis",
+              "estornudarán"
+            ],
+            "Condicional": [
+              "estornudaría",
+              "estornudarías",
+              "estornudaría",
+              "estornudaríamos",
+              "estornudaríais",
+              "estornudarían"
+            ],
+            "Subjuntivo": [
+              "estornude",
+              "estornudes",
+              "estornude",
+              "estornudemos",
+              "estornudéis",
+              "estornuden"
+            ]
+          }
         }
       },
       {
@@ -411,14 +957,56 @@ const CATEGORIES = [
         "exEs": "Se me hinchó el tobillo después de la caída.",
         "conj": {
           "verb": "hincharse",
-          "forms": [
-            "me hincho",
-            "te hinchas",
-            "se hincha",
-            "nos hinchamos",
-            "os hincháis",
-            "se hinchan"
-          ]
+          "tenses": {
+            "Presente": [
+              "me hincho",
+              "te hinchas",
+              "se hincha",
+              "nos hinchamos",
+              "os hincháis",
+              "se hinchan"
+            ],
+            "Pretérito": [
+              "me hinché",
+              "te hinchaste",
+              "se hinchó",
+              "nos hinchamos",
+              "os hinchsteis",
+              "se hincharon"
+            ],
+            "Imperfecto": [
+              "me hinchaba",
+              "te hinchabas",
+              "se hinchaba",
+              "nos hinchábamos",
+              "os hinchabais",
+              "se hinchaban"
+            ],
+            "Futuro": [
+              "me hincharé",
+              "te hincharás",
+              "se hinchará",
+              "nos hincharemos",
+              "os hincharéis",
+              "se hincharán"
+            ],
+            "Condicional": [
+              "me hincharía",
+              "te hincharías",
+              "se hincharía",
+              "nos hincharíamos",
+              "os hincharíais",
+              "se hincharían"
+            ],
+            "Subjuntivo": [
+              "me hinche",
+              "te hinches",
+              "se hinche",
+              "nos hinchemos",
+              "os hinchéis",
+              "se hinchen"
+            ]
+          }
         }
       }
     ]
@@ -456,14 +1044,56 @@ const CATEGORIES = [
         "exEs": "Enchufa el cargador aquí.",
         "conj": {
           "verb": "enchufar",
-          "forms": [
-            "enchufo",
-            "enchufas",
-            "enchufa",
-            "enchufamos",
-            "enchufáis",
-            "enchufan"
-          ]
+          "tenses": {
+            "Presente": [
+              "enchufo",
+              "enchufas",
+              "enchufa",
+              "enchufamos",
+              "enchufáis",
+              "enchufan"
+            ],
+            "Pretérito": [
+              "enchufé",
+              "enchufaste",
+              "enchufó",
+              "enchufamos",
+              "enchufsteis",
+              "enchufaron"
+            ],
+            "Imperfecto": [
+              "enchufaba",
+              "enchufabas",
+              "enchufaba",
+              "enchufábamos",
+              "enchufabais",
+              "enchufaban"
+            ],
+            "Futuro": [
+              "enchufaré",
+              "enchufarás",
+              "enchufará",
+              "enchufaremos",
+              "enchufaréis",
+              "enchufarán"
+            ],
+            "Condicional": [
+              "enchufaría",
+              "enchufarías",
+              "enchufaría",
+              "enchufaríamos",
+              "enchufaríais",
+              "enchufarían"
+            ],
+            "Subjuntivo": [
+              "enchufe",
+              "enchufes",
+              "enchufe",
+              "enchufemos",
+              "enchuféis",
+              "enchufen"
+            ]
+          }
         }
       },
       {
@@ -481,14 +1111,56 @@ const CATEGORIES = [
         "exEs": "¿Puedes barrer el suelo de la cocina?",
         "conj": {
           "verb": "barrer",
-          "forms": [
-            "barro",
-            "barres",
-            "barre",
-            "barremos",
-            "barréis",
-            "barren"
-          ]
+          "tenses": {
+            "Presente": [
+              "barro",
+              "barres",
+              "barre",
+              "barremos",
+              "barréis",
+              "barren"
+            ],
+            "Pretérito": [
+              "barrí",
+              "barriste",
+              "barrió",
+              "barrimos",
+              "barristeis",
+              "barrieron"
+            ],
+            "Imperfecto": [
+              "barría",
+              "barrías",
+              "barría",
+              "barríamos",
+              "barríais",
+              "barrían"
+            ],
+            "Futuro": [
+              "barreré",
+              "barrerás",
+              "barrerá",
+              "barreremos",
+              "barreréis",
+              "barrerán"
+            ],
+            "Condicional": [
+              "barrería",
+              "barrerías",
+              "barrería",
+              "barreríamos",
+              "barreríais",
+              "barrerían"
+            ],
+            "Subjuntivo": [
+              "barra",
+              "barras",
+              "barra",
+              "barramos",
+              "barráis",
+              "barran"
+            ]
+          }
         }
       },
       {
@@ -520,14 +1192,56 @@ const CATEGORIES = [
         "exEs": "Necesito planchar esta camisa.",
         "conj": {
           "verb": "planchar",
-          "forms": [
-            "plancho",
-            "planchas",
-            "plancha",
-            "planchamos",
-            "plancháis",
-            "planchan"
-          ]
+          "tenses": {
+            "Presente": [
+              "plancho",
+              "planchas",
+              "plancha",
+              "planchamos",
+              "plancháis",
+              "planchan"
+            ],
+            "Pretérito": [
+              "planché",
+              "planchaste",
+              "planchó",
+              "planchamos",
+              "planchsteis",
+              "plancharon"
+            ],
+            "Imperfecto": [
+              "planchaba",
+              "planchabas",
+              "planchaba",
+              "planchábamos",
+              "planchabais",
+              "planchaban"
+            ],
+            "Futuro": [
+              "plancharé",
+              "plancharás",
+              "planchará",
+              "plancharemos",
+              "plancharéis",
+              "plancharán"
+            ],
+            "Condicional": [
+              "plancharía",
+              "plancharías",
+              "plancharía",
+              "plancharíamos",
+              "plancharíais",
+              "plancharían"
+            ],
+            "Subjuntivo": [
+              "planche",
+              "planches",
+              "planche",
+              "planchemos",
+              "planchéis",
+              "planchen"
+            ]
+          }
         }
       },
       {
@@ -545,14 +1259,56 @@ const CATEGORIES = [
         "exEs": "El grifo está goteando.",
         "conj": {
           "verb": "gotear",
-          "forms": [
-            "goteo",
-            "goteas",
-            "gotea",
-            "goteamos",
-            "goteáis",
-            "gotean"
-          ]
+          "tenses": {
+            "Presente": [
+              "goteo",
+              "goteas",
+              "gotea",
+              "goteamos",
+              "goteáis",
+              "gotean"
+            ],
+            "Pretérito": [
+              "goteé",
+              "goteaste",
+              "goteó",
+              "goteamos",
+              "gotesteis",
+              "gotearon"
+            ],
+            "Imperfecto": [
+              "goteaba",
+              "goteabas",
+              "goteaba",
+              "goteábamos",
+              "goteabais",
+              "goteaban"
+            ],
+            "Futuro": [
+              "gotearé",
+              "gotearás",
+              "goteará",
+              "gotearemos",
+              "gotearéis",
+              "gotearán"
+            ],
+            "Condicional": [
+              "gotearía",
+              "gotearías",
+              "gotearía",
+              "gotearíamos",
+              "gotearíais",
+              "gotearían"
+            ],
+            "Subjuntivo": [
+              "gotee",
+              "gotees",
+              "gotee",
+              "goteemos",
+              "goteéis",
+              "goteen"
+            ]
+          }
         }
       }
     ]
@@ -590,14 +1346,56 @@ const CATEGORIES = [
         "exEs": "Casi perdemos el vuelo.",
         "conj": {
           "verb": "perder",
-          "forms": [
-            "pierdo",
-            "pierdes",
-            "pierde",
-            "perdemos",
-            "perdéis",
-            "pierden"
-          ]
+          "tenses": {
+            "Presente": [
+              "pierdo",
+              "pierdes",
+              "pierde",
+              "perdemos",
+              "perdéis",
+              "pierden"
+            ],
+            "Pretérito": [
+              "perdí",
+              "perdiste",
+              "perdió",
+              "perdimos",
+              "perdisteis",
+              "perdieron"
+            ],
+            "Imperfecto": [
+              "perdía",
+              "perdías",
+              "perdía",
+              "perdíamos",
+              "perdíais",
+              "perdían"
+            ],
+            "Futuro": [
+              "perderé",
+              "perderás",
+              "perderá",
+              "perderemos",
+              "perderéis",
+              "perderán"
+            ],
+            "Condicional": [
+              "perdería",
+              "perderías",
+              "perdería",
+              "perderíamos",
+              "perderíais",
+              "perderían"
+            ],
+            "Subjuntivo": [
+              "pierda",
+              "pierdas",
+              "pierda",
+              "perdamos",
+              "perdáis",
+              "pierdan"
+            ]
+          }
         }
       },
       {
@@ -615,14 +1413,56 @@ const CATEGORIES = [
         "exEs": "Quiero reservar una habitación para dos noches.",
         "conj": {
           "verb": "reservar",
-          "forms": [
-            "reservo",
-            "reservas",
-            "reserva",
-            "reservamos",
-            "reserváis",
-            "reservan"
-          ]
+          "tenses": {
+            "Presente": [
+              "reservo",
+              "reservas",
+              "reserva",
+              "reservamos",
+              "reserváis",
+              "reservan"
+            ],
+            "Pretérito": [
+              "reservé",
+              "reservaste",
+              "reservó",
+              "reservamos",
+              "reservsteis",
+              "reservaron"
+            ],
+            "Imperfecto": [
+              "reservaba",
+              "reservabas",
+              "reservaba",
+              "reservábamos",
+              "reservabais",
+              "reservaban"
+            ],
+            "Futuro": [
+              "reservaré",
+              "reservarás",
+              "reservará",
+              "reservaremos",
+              "reservaréis",
+              "reservarán"
+            ],
+            "Condicional": [
+              "reservaría",
+              "reservarías",
+              "reservaría",
+              "reservaríamos",
+              "reservaríais",
+              "reservarían"
+            ],
+            "Subjuntivo": [
+              "reserve",
+              "reserves",
+              "reserve",
+              "reservemos",
+              "reservéis",
+              "reserven"
+            ]
+          }
         }
       },
       {
@@ -668,14 +1508,56 @@ const CATEGORIES = [
         "exEs": "Nos perdimos en el casco antiguo.",
         "conj": {
           "verb": "perderse",
-          "forms": [
-            "me pierdo",
-            "te pierdes",
-            "se pierde",
-            "nos perdemos",
-            "os perdéis",
-            "se pierden"
-          ]
+          "tenses": {
+            "Presente": [
+              "me pierdo",
+              "te pierdes",
+              "se pierde",
+              "nos perdemos",
+              "os perdéis",
+              "se pierden"
+            ],
+            "Pretérito": [
+              "me perdí",
+              "te perdiste",
+              "se perdió",
+              "nos perdimos",
+              "os perdisteis",
+              "se perdieron"
+            ],
+            "Imperfecto": [
+              "me perdía",
+              "te perdías",
+              "se perdía",
+              "nos perdíamos",
+              "os perdíais",
+              "se perdían"
+            ],
+            "Futuro": [
+              "me perderé",
+              "te perderás",
+              "se perderá",
+              "nos perderemos",
+              "os perderéis",
+              "se perderán"
+            ],
+            "Condicional": [
+              "me perdería",
+              "te perderías",
+              "se perdería",
+              "nos perderíamos",
+              "os perderíais",
+              "se perderían"
+            ],
+            "Subjuntivo": [
+              "me pierda",
+              "te pierdas",
+              "se pierda",
+              "nos perdamos",
+              "os perdáis",
+              "se pierdan"
+            ]
+          }
         }
       }
     ]
@@ -706,14 +1588,56 @@ const CATEGORIES = [
         "exEs": "Planteó una pregunta interesante.",
         "conj": {
           "verb": "plantear",
-          "forms": [
-            "planteo",
-            "planteas",
-            "plantea",
-            "planteamos",
-            "planteáis",
-            "plantean"
-          ]
+          "tenses": {
+            "Presente": [
+              "planteo",
+              "planteas",
+              "plantea",
+              "planteamos",
+              "planteáis",
+              "plantean"
+            ],
+            "Pretérito": [
+              "planteé",
+              "planteaste",
+              "planteó",
+              "planteamos",
+              "plantesteis",
+              "plantearon"
+            ],
+            "Imperfecto": [
+              "planteaba",
+              "planteabas",
+              "planteaba",
+              "planteábamos",
+              "planteabais",
+              "planteaban"
+            ],
+            "Futuro": [
+              "plantearé",
+              "plantearás",
+              "planteará",
+              "plantearemos",
+              "plantearéis",
+              "plantearán"
+            ],
+            "Condicional": [
+              "plantearía",
+              "plantearías",
+              "plantearía",
+              "plantearíamos",
+              "plantearíais",
+              "plantearían"
+            ],
+            "Subjuntivo": [
+              "plantee",
+              "plantees",
+              "plantee",
+              "planteemos",
+              "planteéis",
+              "planteen"
+            ]
+          }
         }
       },
       {
@@ -724,14 +1648,56 @@ const CATEGORIES = [
         "exEs": "Deberíamos cuestionar esa decisión.",
         "conj": {
           "verb": "cuestionar",
-          "forms": [
-            "cuestiono",
-            "cuestionas",
-            "cuestiona",
-            "cuestionamos",
-            "cuestionáis",
-            "cuestionan"
-          ]
+          "tenses": {
+            "Presente": [
+              "cuestiono",
+              "cuestionas",
+              "cuestiona",
+              "cuestionamos",
+              "cuestionáis",
+              "cuestionan"
+            ],
+            "Pretérito": [
+              "cuestioné",
+              "cuestionaste",
+              "cuestionó",
+              "cuestionamos",
+              "cuestionsteis",
+              "cuestionaron"
+            ],
+            "Imperfecto": [
+              "cuestionaba",
+              "cuestionabas",
+              "cuestionaba",
+              "cuestionábamos",
+              "cuestionabais",
+              "cuestionaban"
+            ],
+            "Futuro": [
+              "cuestionaré",
+              "cuestionarás",
+              "cuestionará",
+              "cuestionaremos",
+              "cuestionaréis",
+              "cuestionarán"
+            ],
+            "Condicional": [
+              "cuestionaría",
+              "cuestionarías",
+              "cuestionaría",
+              "cuestionaríamos",
+              "cuestionaríais",
+              "cuestionarían"
+            ],
+            "Subjuntivo": [
+              "cuestione",
+              "cuestiones",
+              "cuestione",
+              "cuestionemos",
+              "cuestionéis",
+              "cuestionen"
+            ]
+          }
         }
       },
       {
@@ -742,14 +1708,56 @@ const CATEGORIES = [
         "exEs": "Logró su objetivo.",
         "conj": {
           "verb": "lograr",
-          "forms": [
-            "logro",
-            "logras",
-            "logra",
-            "logramos",
-            "lográis",
-            "logran"
-          ]
+          "tenses": {
+            "Presente": [
+              "logro",
+              "logras",
+              "logra",
+              "logramos",
+              "lográis",
+              "logran"
+            ],
+            "Pretérito": [
+              "logré",
+              "lograste",
+              "logró",
+              "logramos",
+              "logrsteis",
+              "lograron"
+            ],
+            "Imperfecto": [
+              "lograba",
+              "lograbas",
+              "lograba",
+              "lográbamos",
+              "lograbais",
+              "lograban"
+            ],
+            "Futuro": [
+              "lograré",
+              "lograrás",
+              "logrará",
+              "lograremos",
+              "lograréis",
+              "lograrán"
+            ],
+            "Condicional": [
+              "lograría",
+              "lograrías",
+              "lograría",
+              "lograríamos",
+              "lograríais",
+              "lograrían"
+            ],
+            "Subjuntivo": [
+              "logre",
+              "logres",
+              "logre",
+              "logremos",
+              "logréis",
+              "logren"
+            ]
+          }
         }
       },
       {
@@ -767,14 +1775,56 @@ const CATEGORIES = [
         "exEs": "Esta tierra pertenece al estado.",
         "conj": {
           "verb": "pertenecer",
-          "forms": [
-            "pertenezco",
-            "perteneces",
-            "pertenece",
-            "pertenecemos",
-            "pertenecéis",
-            "pertenecen"
-          ]
+          "tenses": {
+            "Presente": [
+              "pertenezco",
+              "perteneces",
+              "pertenece",
+              "pertenecemos",
+              "pertenecéis",
+              "pertenecen"
+            ],
+            "Pretérito": [
+              "pertenecí",
+              "perteneciste",
+              "perteneció",
+              "pertenecimos",
+              "pertenecisteis",
+              "pertenecieron"
+            ],
+            "Imperfecto": [
+              "pertenecía",
+              "pertenecías",
+              "pertenecía",
+              "pertenecíamos",
+              "pertenecíais",
+              "pertenecían"
+            ],
+            "Futuro": [
+              "perteneceré",
+              "pertenecerás",
+              "pertenecerá",
+              "perteneceremos",
+              "perteneceréis",
+              "pertenecerán"
+            ],
+            "Condicional": [
+              "pertenecería",
+              "pertenecerías",
+              "pertenecería",
+              "perteneceríamos",
+              "perteneceríais",
+              "pertenecerían"
+            ],
+            "Subjuntivo": [
+              "pertenezca",
+              "pertenezcas",
+              "pertenezca",
+              "pertenezcamos",
+              "pertenezcáis",
+              "pertenezcan"
+            ]
+          }
         }
       },
       {
@@ -806,14 +1856,56 @@ const CATEGORIES = [
         "exEs": "Apoyo tu propuesta.",
         "conj": {
           "verb": "apoyar",
-          "forms": [
-            "apoyo",
-            "apoyas",
-            "apoya",
-            "apoyamos",
-            "apoyáis",
-            "apoyan"
-          ]
+          "tenses": {
+            "Presente": [
+              "apoyo",
+              "apoyas",
+              "apoya",
+              "apoyamos",
+              "apoyáis",
+              "apoyan"
+            ],
+            "Pretérito": [
+              "apoyé",
+              "apoyaste",
+              "apoyó",
+              "apoyamos",
+              "apoysteis",
+              "apoyaron"
+            ],
+            "Imperfecto": [
+              "apoyaba",
+              "apoyabas",
+              "apoyaba",
+              "apoyábamos",
+              "apoyabais",
+              "apoyaban"
+            ],
+            "Futuro": [
+              "apoyaré",
+              "apoyarás",
+              "apoyará",
+              "apoyaremos",
+              "apoyaréis",
+              "apoyarán"
+            ],
+            "Condicional": [
+              "apoyaría",
+              "apoyarías",
+              "apoyaría",
+              "apoyaríamos",
+              "apoyaríais",
+              "apoyarían"
+            ],
+            "Subjuntivo": [
+              "apoye",
+              "apoyes",
+              "apoye",
+              "apoyemos",
+              "apoyéis",
+              "apoyen"
+            ]
+          }
         }
       },
       {
