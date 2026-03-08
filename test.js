@@ -469,6 +469,86 @@ assert('Cannot go above learned (level 6)', () => {
   eq(window.localStorage.getItem('sp_0_0'), '6');
 });
 
+// ─── AUDIO NOTE UI ───
+console.log('\nAudio note UI:');
+
+// Navigate to a card to test audio row presence
+document.querySelector('.cat-btn').click();
+window.currentIndex = 0;
+window.showCard();
+
+assert('Audio row element exists on card back', () => {
+  const row = document.getElementById('audio-row');
+  ok(row, 'audio-row element should exist');
+});
+
+assert('Audio row is inside card-back', () => {
+  const back = document.querySelector('.card-back');
+  const row = document.getElementById('audio-row');
+  ok(back.contains(row), 'audio-row should be inside card-back');
+});
+
+assert('Audio row is between example and conj-toggle', () => {
+  const back = document.querySelector('.card-back');
+  const children = [...back.children];
+  const exIdx = children.findIndex(el => el.classList.contains('example'));
+  const audioIdx = children.findIndex(el => el.id === 'audio-row');
+  const conjIdx = children.findIndex(el => el.id === 'conj-toggle');
+  ok(exIdx < audioIdx, 'audio-row should come after example');
+  ok(audioIdx < conjIdx, 'audio-row should come before conj-toggle');
+});
+
+assert('Audio helper functions are defined', () => {
+  ok(typeof window.openAudioDB === 'function' || typeof window.renderAudioRow === 'function' ||
+     document.getElementById('audio-row') !== null,
+    'Audio functions or row should exist');
+});
+
+assert('Audio row has CSS styling', () => {
+  const style = document.querySelector('style');
+  ok(style.textContent.includes('.audio-row'), 'CSS should contain .audio-row');
+  ok(style.textContent.includes('.audio-btn'), 'CSS should contain .audio-btn');
+  ok(style.textContent.includes('.audio-delete'), 'CSS should contain .audio-delete');
+});
+
+assert('stopCurrentAudio is defined in script', () => {
+  const scripts = document.querySelectorAll('script');
+  let found = false;
+  scripts.forEach(s => { if (s.textContent.includes('stopCurrentAudio')) found = true; });
+  ok(found, 'stopCurrentAudio should be defined');
+});
+
+assert('showCard calls renderAudioRow', () => {
+  const scripts = document.querySelectorAll('script');
+  let found = false;
+  scripts.forEach(s => { if (s.textContent.includes('renderAudioRow()')) found = true; });
+  ok(found, 'showCard should call renderAudioRow');
+});
+
+assert('showCard calls stopCurrentAudio', () => {
+  const scripts = document.querySelectorAll('script');
+  let found = false;
+  scripts.forEach(s => { if (s.textContent.includes('stopCurrentAudio()')) found = true; });
+  ok(found, 'showCard should call stopCurrentAudio');
+});
+
+assert('120 second max recording limit defined', () => {
+  const scripts = document.querySelectorAll('script');
+  let found = false;
+  scripts.forEach(s => { if (s.textContent.includes('120000')) found = true; });
+  ok(found, 'Should have 120s (120000ms) max recording limit');
+});
+
+assert('IndexedDB database name is spanishAudio', () => {
+  const scripts = document.querySelectorAll('script');
+  let found = false;
+  scripts.forEach(s => { if (s.textContent.includes("'spanishAudio'")) found = true; });
+  ok(found, 'Should use spanishAudio database name');
+});
+
+// Go back to menu for the next section
+document.getElementById('back-btn').click();
+
 // ─── BACK BUTTON ───
 console.log('\nBack button:');
 

@@ -134,6 +134,36 @@
       font-size: .75rem; color: #888; margin-top: .4rem; text-align: center;
     }
 
+    /* Audio note row */
+    .audio-row {
+      margin-top: 1rem; display: flex; align-items: center;
+      gap: .6rem; min-height: 44px;
+    }
+    .audio-btn {
+      width: 44px; height: 44px; border-radius: 50%;
+      border: 1px solid #1a3a6e; color: #fff;
+      font-size: 1.2rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s;
+      background: #0f3460; flex-shrink: 0;
+    }
+    .audio-btn:active { opacity: .6; }
+    .audio-btn.recording { background: #e94560; border-color: #e94560; animation: pulse-rec 1s infinite; }
+    .audio-btn.playing { background: #4ecca3; border-color: #4ecca3; }
+    @keyframes pulse-rec {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .6; }
+    }
+    .audio-label { font-size: .8rem; color: #888; }
+    .audio-duration { font-size: .8rem; color: #ccc; font-variant-numeric: tabular-nums; }
+    .audio-delete {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: none; border: 1px solid #333; color: #e94560;
+      font-size: 1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .audio-delete:active { opacity: .6; }
+
     /* Conjugation button */
     .conj-toggle {
       display: none; margin-top: .8rem;
@@ -251,6 +281,7 @@
             <div id="ex-es"></div>
             <span id="ex-en"></span>
           </div>
+          <div class="audio-row" id="audio-row"></div>
           <button class="conj-toggle" id="conj-toggle">Conjugations</button>
           <div class="confidence" id="confidence">
             <button class="conf-btn" id="conf-minus">−</button>
@@ -307,6 +338,7 @@
     const conjVerbTitle = document.getElementById('conj-verb-title');
     const conjTabs = document.getElementById('conj-tabs');
     const conjBody = document.getElementById('conj-body');
+    const audioRow = document.getElementById('audio-row');
     const PRONOUNS = ['yo', 'tú', 'él/ella', 'nosotros', 'vosotros', 'ellos'];
     let currentTenses = null;
     let activeTense = null;
@@ -339,6 +371,183 @@
         if (isLearned(catIdx, i)) n++;
       }
       return n;
+    }
+
+    // --- Audio Notes (IndexedDB) ---
+    let audioDB = null;
+    function openAudioDB() {
+      if (audioDB) return Promise.resolve(audioDB);
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open('spanishAudio', 1);
+        req.onupgradeneeded = () => { req.result.createObjectStore('notes'); };
+        req.onsuccess = () => { audioDB = req.result; resolve(audioDB); };
+        req.onerror = () => reject(req.error);
+      });
+    }
+    function audioKey(catIdx, wordIdx) { return catIdx + '_' + wordIdx; }
+    function getNote(catIdx, wordIdx) {
+      return openAudioDB().then(db => new Promise((resolve, reject) => {
+        const tx = db.transaction('notes', 'readonly');
+        const req = tx.objectStore('notes').get(audioKey(catIdx, wordIdx));
+        req.onsuccess = () => resolve(req.result || null);
+        req.onerror = () => reject(req.error);
+      }));
+    }
+    function saveNote(catIdx, wordIdx, blob, duration) {
+      return openAudioDB().then(db => new Promise((resolve, reject) => {
+        const tx = db.transaction('notes', 'readwrite');
+        tx.objectStore('notes').put({ blob: blob, duration: duration }, audioKey(catIdx, wordIdx));
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      }));
+    }
+    function deleteNote(catIdx, wordIdx) {
+      return openAudioDB().then(db => new Promise((resolve, reject) => {
+        const tx = db.transaction('notes', 'readwrite');
+        tx.objectStore('notes').delete(audioKey(catIdx, wordIdx));
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      }));
+    }
+
+    let mediaRecorder = null;
+    let recChunks = [];
+    let recStart = 0;
+    let recTimer = null;
+    let recMaxTimer = null;
+    let audioElement = null;
+
+    function stopCurrentAudio() {
+      if (audioElement) { audioElement.pause(); audioElement = null; }
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+        mediaRecorder.stream.getTracks().forEach(t => t.stop());
+      }
+      clearInterval(recTimer);
+      clearTimeout(recMaxTimer);
+    }
+
+    function fmtDur(s) {
+      const m = Math.floor(s / 60);
+      const sec = Math.floor(s % 60);
+      return m + ':' + (sec < 10 ? '0' : '') + sec;
+    }
+
+    function renderAudioRow() {
+      audioRow.innerHTML = '';
+      if (typeof indexedDB === 'undefined') return;
+      const cat = currentCatIndex, word = currentIndex;
+      getNote(cat, word).then(note => {
+        // Re-check we're still on the same card
+        if (currentCatIndex !== cat || currentIndex !== word) return;
+        audioRow.innerHTML = '';
+        if (note) {
+          renderPlaybackUI(note, cat, word);
+        } else {
+          renderRecordUI(cat, word);
+        }
+      }).catch(() => {
+        renderRecordUI(cat, word);
+      });
+    }
+
+    function renderRecordUI(cat, word) {
+      const btn = document.createElement('button');
+      btn.className = 'audio-btn';
+      btn.innerHTML = '🎙';
+      btn.setAttribute('aria-label', 'Record note');
+      const label = document.createElement('span');
+      label.className = 'audio-label';
+      label.textContent = 'Record note';
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        startRecording(cat, word, btn, label);
+      });
+      audioRow.appendChild(btn);
+      audioRow.appendChild(label);
+    }
+
+    function startRecording(cat, word, btn, label) {
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+        recChunks = [];
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recChunks.push(e.data); };
+        mediaRecorder.onstop = () => {
+          stream.getTracks().forEach(t => t.stop());
+          clearInterval(recTimer);
+          clearTimeout(recMaxTimer);
+          const blob = new Blob(recChunks, { type: mediaRecorder.mimeType });
+          const dur = (Date.now() - recStart) / 1000;
+          saveNote(cat, word, blob, dur).then(() => renderAudioRow());
+        };
+        mediaRecorder.start();
+        recStart = Date.now();
+        btn.classList.add('recording');
+        label.textContent = '0:00';
+        label.className = 'audio-duration';
+        recTimer = setInterval(() => {
+          label.textContent = fmtDur((Date.now() - recStart) / 1000);
+        }, 500);
+        recMaxTimer = setTimeout(() => {
+          if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
+        }, 120000);
+        // Change click to stop
+        const stopHandler = e2 => {
+          e2.stopPropagation();
+          btn.removeEventListener('click', stopHandler);
+          if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
+        };
+        btn.removeEventListener('click', arguments.callee);
+        btn.addEventListener('click', stopHandler);
+      }).catch(() => {
+        label.textContent = 'Mic denied';
+      });
+    }
+
+    function renderPlaybackUI(note, cat, word) {
+      const playBtn = document.createElement('button');
+      playBtn.className = 'audio-btn';
+      playBtn.innerHTML = '▶';
+      playBtn.setAttribute('aria-label', 'Play note');
+      const durLabel = document.createElement('span');
+      durLabel.className = 'audio-duration';
+      durLabel.textContent = fmtDur(note.duration);
+      const delBtn = document.createElement('button');
+      delBtn.className = 'audio-delete';
+      delBtn.innerHTML = '🗑';
+      delBtn.setAttribute('aria-label', 'Delete note');
+
+      playBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        if (audioElement) {
+          audioElement.pause();
+          audioElement = null;
+          playBtn.innerHTML = '▶';
+          playBtn.classList.remove('playing');
+          return;
+        }
+        const url = URL.createObjectURL(note.blob);
+        audioElement = new Audio(url);
+        audioElement.play();
+        playBtn.innerHTML = '⏸';
+        playBtn.classList.add('playing');
+        audioElement.onended = () => {
+          URL.revokeObjectURL(url);
+          audioElement = null;
+          playBtn.innerHTML = '▶';
+          playBtn.classList.remove('playing');
+        };
+      });
+
+      delBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        stopCurrentAudio();
+        deleteNote(cat, word).then(() => renderAudioRow());
+      });
+
+      audioRow.appendChild(playBtn);
+      audioRow.appendChild(durLabel);
+      audioRow.appendChild(delBtn);
     }
 
     // Build category grid
@@ -375,6 +584,7 @@
     }
 
     function showCard() {
+      stopCurrentAudio();
       const w = currentWords[currentIndex];
       const level = getLevel(currentCatIndex, currentIndex);
       const learned = level > LEVEL_MAX;
@@ -422,6 +632,9 @@
         currentTenses = null;
         conjToggle.style.display = 'none';
       }
+
+      // Audio note
+      renderAudioRow();
     }
 
     function renderConjTabs(tenseNames) {
