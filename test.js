@@ -546,6 +546,28 @@ assert('IndexedDB database name is spanishAudio', () => {
   ok(found, 'Should use spanishAudio database name');
 });
 
+assert('Recording uses local startTime, not shared recStart for duration', () => {
+  const scripts = document.querySelectorAll('script');
+  let found = false;
+  scripts.forEach(s => {
+    // onstop should reference startTime (closure), not recStart
+    if (s.textContent.includes('Date.now() - startTime')) found = true;
+  });
+  ok(found, 'onstop should use captured startTime for duration, not shared recStart');
+});
+
+assert('Single click handler toggles recording via flag', () => {
+  const scripts = document.querySelectorAll('script');
+  let hasFlag = false;
+  let noCallee = true;
+  scripts.forEach(s => {
+    if (s.textContent.includes('let recording = false')) hasFlag = true;
+    if (s.textContent.includes('arguments.callee')) noCallee = false;
+  });
+  ok(hasFlag, 'Should use a recording flag');
+  ok(noCallee, 'Should not use arguments.callee');
+});
+
 // Go back to menu for the next section
 document.getElementById('back-btn').click();
 

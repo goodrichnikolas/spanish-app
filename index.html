@@ -452,6 +452,7 @@
     }
 
     function renderRecordUI(cat, word) {
+      let recording = false;
       const btn = document.createElement('button');
       btn.className = 'audio-btn';
       btn.innerHTML = '🎙';
@@ -461,47 +462,42 @@
       label.textContent = 'Record note';
       btn.addEventListener('click', e => {
         e.stopPropagation();
-        startRecording(cat, word, btn, label);
+        if (recording) {
+          if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
+          return;
+        }
+        recording = true;
+        navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+          recChunks = [];
+          const startTime = Date.now();
+          recStart = startTime;
+          mediaRecorder = new MediaRecorder(stream);
+          mediaRecorder.ondataavailable = ev => { if (ev.data.size > 0) recChunks.push(ev.data); };
+          mediaRecorder.onstop = () => {
+            stream.getTracks().forEach(t => t.stop());
+            clearInterval(recTimer);
+            clearTimeout(recMaxTimer);
+            const blob = new Blob(recChunks, { type: mediaRecorder.mimeType });
+            const dur = (Date.now() - startTime) / 1000;
+            saveNote(cat, word, blob, dur).then(() => renderAudioRow());
+          };
+          mediaRecorder.start();
+          btn.classList.add('recording');
+          label.textContent = '0:00';
+          label.className = 'audio-duration';
+          recTimer = setInterval(() => {
+            label.textContent = fmtDur((Date.now() - startTime) / 1000);
+          }, 500);
+          recMaxTimer = setTimeout(() => {
+            if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
+          }, 120000);
+        }).catch(() => {
+          recording = false;
+          label.textContent = 'Mic denied';
+        });
       });
       audioRow.appendChild(btn);
       audioRow.appendChild(label);
-    }
-
-    function startRecording(cat, word, btn, label) {
-      navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-        recChunks = [];
-        mediaRecorder = new MediaRecorder(stream);
-        mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recChunks.push(e.data); };
-        mediaRecorder.onstop = () => {
-          stream.getTracks().forEach(t => t.stop());
-          clearInterval(recTimer);
-          clearTimeout(recMaxTimer);
-          const blob = new Blob(recChunks, { type: mediaRecorder.mimeType });
-          const dur = (Date.now() - recStart) / 1000;
-          saveNote(cat, word, blob, dur).then(() => renderAudioRow());
-        };
-        mediaRecorder.start();
-        recStart = Date.now();
-        btn.classList.add('recording');
-        label.textContent = '0:00';
-        label.className = 'audio-duration';
-        recTimer = setInterval(() => {
-          label.textContent = fmtDur((Date.now() - recStart) / 1000);
-        }, 500);
-        recMaxTimer = setTimeout(() => {
-          if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
-        }, 120000);
-        // Change click to stop
-        const stopHandler = e2 => {
-          e2.stopPropagation();
-          btn.removeEventListener('click', stopHandler);
-          if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
-        };
-        btn.removeEventListener('click', arguments.callee);
-        btn.addEventListener('click', stopHandler);
-      }).catch(() => {
-        label.textContent = 'Mic denied';
-      });
     }
 
     function renderPlaybackUI(note, cat, word) {
